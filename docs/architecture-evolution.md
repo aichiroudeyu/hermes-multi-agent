@@ -122,17 +122,7 @@ Agent 工具链变得可插拔、可扩展。
 
 ---
 
-## 阶段九：开源 + 持续迭代 (2026-07)
-
-**开源**: `aichiroudeyu/hermes-multi-agent` MIT 许可
-
-**当前状态**:
-- 四 Agent 星型调度: Hermes + Claude Code + OpenClaw + Marvis
-- 三层记忆: Memory (41条) + Wiki (12文件) + Skills (162个)
-- 5 个 MCP Server
-- 8 个通用脚本
-- SOUL.md 行为约束
-- Loop 自动闭环
+## 阶段九：Marvis 通道 + 开源 (2026-07-01)\n\n**四 Agent 体系建立**: 新增 Marvis（腾讯桌面 AI 助手 v1.60）作为系统操作轨。\n\n**Marvis 文件桥接**:\n- 共享目录 `C:\\Users\\user\\.hermes-marvis-bridge\\`\n- `bridge-listener.py` 2 秒实时轮询（pythonw 后台无窗口）\n- `schtasks ONLOGON` 开机自启（需完整 pythonw 路径，延迟 30 秒）\n- `winotify` 桌面通知（替代不兼容 Python 3.12 的 win10toast）\n- 通信协议: task → processing → result JSON\n\n**流程**:\n```\nHermes(WSL2) 写 task.json → bridge-listener 2s内标记processing → winotify弹通知\n→ 用户看到通知 → 手动找Marvis执行 → Marvis写回result.json → Hermes读取\n```\n\n**已知限制**: Marvis 无 CLI/HTTP API，用户需手动转发。未来等 Marvis 开放本地 API 后升级为全自动。\n\n**开源**: `aichiroudeyu/hermes-multi-agent` MIT 许可
 
 ---
 
@@ -148,6 +138,7 @@ Agent 工具链变得可插拔、可扩展。
 | 06-25 | 更新前备份 MCP | npm 更新可能清空 MCP servers |
 | 06-29 | GitHub 开源 MIT | 让更多嵌入式+AI 交叉领域的人受益 |
 | 06-30 | 并行走 terminal bg 不靠 delegate_task | delegate_task 走子 Agent 非 Claude Code CLI，terminal bg 真正并行 |
+| 07-01 | Marvis 文件桥接 2s 实时轮询 | bridge-listener.py + winotify 替代 30min 定时轮询，通道投产 |
 
 ---
 

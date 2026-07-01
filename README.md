@@ -40,7 +40,7 @@ v1.0 发布后一个月的自进化成果：
 | **跨 PC 同步** | 不同步 API key/本地 IP/端口号，只同步纯知识和工具 |
 | **并行委派** | `terminal(background=true)` 同时开多个 Claude Code CLI + OpenClaw，真正并行 |
 | **四 Agent 体系** | 新增 Marvis（腾讯 AI 助手）作为系统操作轨，Windows 文件管理/系统配置/桌面自动化 |
-| **Marvis 文件桥接** | WSL2 ↔ Windows 跨 OS 通信，共享目录 + Marvis 定时轮询，零外部依赖 |
+| **Marvis 文件桥接** | WSL2 ↔ Windows 跨 OS 通信，bridge-listener 2s 实时轮询 + winotify 桌面通知，零外部依赖 |
 | **审计日志** | `audit-log.py` 记录每次委派（Agent/耗时/状态/成本），`--stats` 一键统计 |
 | **角色去重** | Agent 角色定义收敛到 `agent-roles.md` 单一来源，SKILL.md 只保留调度逻辑 |
 
@@ -91,6 +91,10 @@ scripts/
 ├── memory-archive.py                 # 记忆归档清理
 ├── audit-log.py                      # 委派审计日志
 
+bridge/
+├── bridge-listener.py                # Marvis 桥接监听器 (winotify, 2s轮询)
+├── bridge-solution.md                # 通信方案设计文档
+
 docs/
 ├── pitfalls-and-fixes.md             # 更新后问题记录 (13条)
 └── architecture-evolution.md         # 体系演进历程
@@ -139,7 +143,7 @@ python3 hermes_loop.py --goal "写 TCP echo server" \
 | **Hermes** | 总调度 + 读代码 + 记忆管理 | CLI 直辖 |
 | **Claude Code** | 多文件重写 + 代码审查 + 编译 | terminal heredoc |
 | **OpenClaw** | 网页搜索 + 技术调研 + 内容抓取 | terminal CLI |
-| **Marvis** | Windows 文件管理 + 系统配置 + 桌面自动化 | 文件桥接 (30min 定时轮询) |
+| **Marvis** | Windows 文件管理 + 系统配置 + 桌面自动化 | 文件桥接 (bridge-listener 2s轮询 + winotify通知) |
 
 ### 6. 审计日志
 

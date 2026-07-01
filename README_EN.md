@@ -35,7 +35,7 @@ One month of self-evolution since v1.0:
 | **Cross-PC Sync Safety** | No API keys, local IPs, or port numbers in sync packages — only pure knowledge and tools |
 | **Parallel Delegation** | `terminal(background=true)` spawns multiple Claude Code CLI + OpenClaw simultaneously, true parallelism |
 | **Four-Agent System** | Added Marvis (Tencent AI assistant) as system operations lane — Windows file management, system config, desktop automation |
-| **Marvis File Bridge** | WSL2 ↔ Windows cross-OS communication via shared directory + Marvis scheduled polling, zero external deps |
+| **Marvis File Bridge** | WSL2 ↔ Windows cross-OS communication via shared directory + bridge-listener 2s real-time polling + winotify desktop notifications, zero external deps |
 | **Audit Log** | `audit-log.py` records every delegation (agent/duration/status/cost), `--stats` for summary |
 | **Single Source Roles** | Agent role definitions consolidated in `agent-roles.md`, SKILL.md only references |
 
@@ -101,6 +101,10 @@ scripts/
 ├── memory-archive.py                 # Memory archival and cleanup
 ├── memory-archive.py                 # Memory archival and cleanup
 ├── audit-log.py                      # Delegation audit log
+
+bridge/
+├── bridge-listener.py                # Marvis bridge listener (winotify, 2s polling)
+├── bridge-solution.md                # Communication design doc
 
 docs/
 ├── pitfalls-and-fixes.md             # Post-update issue log (13 items)

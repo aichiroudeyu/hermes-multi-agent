@@ -25,6 +25,7 @@
 | 13 | Google/DDG CAPTCHA | GREEN | WARN 不可避 |
 | 14 | headroom-ai token 压缩为 0 | GREEN | DONE 放弃 headroom 保留 squeez |
 | 15 | AutoCLI 浏览器模式 WSL2 不通 | GREEN | DONE Windows 终端手动 |
+| 16 | bridge-listener win10toast 不兼容 Python 3.12 | GREEN | DONE 替换为 winotify |
 
 ---
 
