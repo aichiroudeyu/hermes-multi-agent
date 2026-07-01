@@ -1,7 +1,7 @@
 # Hermes Multi-Agent — 四 Agent 星型调度体系
 
 > 一个自学的嵌入式程序员，用 AI 不停摸索出来的多 Agent 协作体系。
-> 总调度 (Hermes) + 代码执行 (Claude Code) + 网页搜索 (OpenClaw)。
+> 总调度 (Hermes) + 代码执行 (Claude Code) + 网页搜索 (OpenClaw) + 系统操作 (Marvis)。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -11,13 +11,13 @@
 
 ## 一句话
 
-**Hermes 总调度 + Claude Code 写代码 + OpenClaw 搜资料 — 一次只派一个人，等 `【DONE】` 再派下一个。**
+**Hermes 总调度 + Claude Code 写代码 + OpenClaw 搜资料 + Marvis 系统操作**
 
 ---
 
 ## 我是谁
 
-自学嵌入式程序员。没有 CS 背景，靠着对硬件的热爱和对 AI 的死磕，一个人摸索出一套真正能用的三 Agent 协作体系。
+自学嵌入式程序员。没有 CS 背景，靠着对硬件的热爱和对 AI 的死磕，一个人摸索出一套真正能用的四 Agent 协作体系。
 
 这个项目来自真实的 BLE Mesh 固件开发日常——不是论文，是实战。**根据使用经验持续迭代中。**
 
@@ -76,7 +76,7 @@ v1.0 发布后一个月的自进化成果：
 skills/hermes-orchestrator/
 ├── SKILL.md                          # 核心调度逻辑
 └── references/
-    ├── agent-roles.md                # 三 Agent 角色定义 + 通信协议
+    ├── agent-roles.md                # 四 Agent 角色定义 + 通信协议
     ├── embedded-boundary-checklist.md # UART/Mesh/Flash/ISR 边界检查表
     └── pitfalls-collection.md       # 多 Agent 通用陷阱集
 
@@ -162,7 +162,7 @@ mkdir -p ~/.hermes/workspace
 
 - **嵌入式程序员** — `embedded-boundary-checklist.md` 直接可用，替换芯片型号即可
 - **其他领域** — 调度逻辑与领域无关，换掉三个 Agent 名字就能复用
-- **AI Agent 新手** — 先单 Agent → 加搜索 Agent → 最后引入调度 Agent
+- **AI Agent 新手** — 先单 Agent → 加搜索 Agent → 加系统操作 Agent → 最后引入调度 Agent
 
 ---
 

@@ -7,7 +7,7 @@ tags: [Multi-Agent, Orchestrator, Claude, OpenClaw, Feishu]
 related_skills: [claude-code, mcu-firmware-dev, wsl2-setup, dali-protocol-reference]
 ---
 
-# Hermes 三 Agent 星型调度架构 v6.0
+# Hermes 四 Agent 星型调度架构 v6.0
 
 ## 架构总览
 
@@ -40,13 +40,14 @@ related_skills: [claude-code, mcu-firmware-dev, wsl2-setup, dali-protocol-refere
 
 ## 一、真隔离
 
-三个 Agent 是三个独立进程，物理隔离：
+三个 Agent 是三个独立进程，物理隔离（Marvis 通过文件桥接通信，也属独立进程）：
 
 | Agent | 进程 | 崩溃影响 |
 |-------|------|---------|
 | Hermes | `hermes gateway run` (systemd) | 总调度崩，全员停 |
 | Claude Code | `claude -p` 一次性调用 | 崩了只丢当前任务，Hermes 重试 |
 | OpenClaw | `openclaw agent` 一次性调用 | 同上 |
+| Marvis | Windows 桌面应用 + 定时轮询 | 崩了仅丢失当前系统操作任务 |
 
 **规则：任一子 Agent 崩了，Hermes 捕获错误，最多重试 2 次，然后汇报失败。**
 
@@ -81,11 +82,11 @@ AGENT_OUTPUT
         │
 2. Hermes 分析任务类型
         │
-   ┌────┼────┐
-   ▼    ▼    ▼
-  需要  需要  需要
-  代码  搜索  平台
-        │
+   ┌────┼────┬────┐
+   ▼    ▼    ▼    ▼
+  需要  需要  需要  需要
+  代码  搜索  平台  系统
+  操作  操作
 3. 调对应 Agent（只调一个！）
         │
 4. 等待 Agent 返回结果（必须带【DONE】）
@@ -177,6 +178,7 @@ openclaw agent --agent main --session-id "id-$(date +%s)" --local \
 视觉层: claude-opus-4-8 @ apikeyfun (vision_analyze)
 代码层: claude-opus-4-8 @ apikeyfun (Claude Code)
 搜索层: kimi-k2.7-code @ moonshot + deepseek-v4-flash (OpenClaw)
+系统层: 腾讯自有模型 @ 固定日额度 (Marvis)
 委派层: deepseek-v4-flash @ DeepSeek (子 Agent)
 ```
 
@@ -199,7 +201,8 @@ Wiki 位于 `~/.hermes/wiki/`，是所有 Agent 的共享知识库。
 1. 纯聊天/咨询 → Hermes 自己回答
 2. 代码任务 → 调 Claude Code
 3. 搜索任务 → 调 OpenClaw
-4. 飞书通知 → Hermes 直连（WebSocket）
+4. 系统操作/文件管理 → 调 Marvis (文件桥接)
+5. 飞书通知 → Hermes 直连（WebSocket）
 
 回复格式：
 ```
@@ -272,7 +275,7 @@ npm install -g @anthropic-ai/claude-code@latest openclaw@latest
 
 ```
 references/
-├── agent-roles.md                  ← 三 Agent 角色定义 + 通信协议
+├── agent-roles.md                  ← 四 Agent 角色定义 + 通信协议
 ├── embedded-boundary-checklist.md  ← UART/Mesh/Flash/ISR 边界检查表
 ├── pitfalls-collection.md          ← 所有踩坑记录（patch/审查/MCP/OpenClaw/SkillClaw/Gitee）
 ├── search-strategy.md              ← 搜索策略 v3：OpenClaw 统一搜索
@@ -291,4 +294,4 @@ references/
 
 ---
 
-> **版本**: v6.1.0 (2026-06-25) — 新增 Session 闭幕铁律（完整验证+HTTPS推送+README更新+会话内完成）。descriptions 全量升级 → 含触发场景+排除规则。
+> **版本**: v6.2.0 (2026-07-01) — 四 Agent 体系：新增 Marvis 系统操作轨 (文件桥接+定时轮询)。

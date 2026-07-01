@@ -1,6 +1,6 @@
 # Hermes Multi-Agent 体系演进历程
 
-> 从"让 AI 帮我写几行代码"到一个有灵魂、有记忆、能自我进化的三 Agent 协作体系。
+> 从"让 AI 帮我写几行代码"到一个有灵魂、有记忆、能自我进化的四 Agent 协作体系。
 > 时间跨度：2026-05 ~ 2026-07
 
 ---
@@ -127,7 +127,7 @@ Agent 工具链变得可插拔、可扩展。
 **开源**: `aichiroudeyu/hermes-multi-agent` MIT 许可
 
 **当前状态**:
-- 三 Agent 星型调度: Hermes + Claude Code + OpenClaw
+- 四 Agent 星型调度: Hermes + Claude Code + OpenClaw + Marvis
 - 三层记忆: Memory (41条) + Wiki (12文件) + Skills (162个)
 - 5 个 MCP Server
 - 8 个通用脚本

@@ -1,7 +1,7 @@
-# Hermes Multi-Agent — 三 Agent 星型调度体系
+# Hermes Multi-Agent — 四 Agent 星型调度体系
 
 > 一个自学的嵌入式程序员，用 AI 不停摸索出来的多 Agent 协作体系。
-> 总调度 (Hermes) + 代码执行 (Claude Code) + 网页搜索 (OpenClaw)。
+> 总调度 (Hermes) + 代码执行 (Claude Code) + 网页搜索 (OpenClaw) + 系统操作 (Marvis)。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [中文版](README_CN.md) | [English](README_EN.md)
@@ -10,7 +10,7 @@
 
 ## 关于我
 
-我是一名自学嵌入式开发的程序员。没有计算机专业背景，靠着对底层硬件的热情和对 AI 工具的不停摸索，用 Hermes、Claude Code、OpenClaw 三个 AI Agent 搭建了一套真正能用于日常固件开发的协作体系。
+我是一名自学嵌入式开发的程序员。没有计算机专业背景，靠着对底层硬件的热情和对 AI 工具的不停摸索，用 Hermes、Claude Code、OpenClaw、Marvis 四个 AI Agent 搭建了一套真正能用于日常固件开发的协作体系。
 
 这个项目不是实验室里的理论产物——它诞生于真实的 Telink BLE Mesh 固件开发、Dongle 厂测协议调试、DALI/DMX 照明协议学习中。每一个踩坑记录、每一条边界检查规则、每一个调度策略，都来自我被 bug 折磨后痛定思痛的总结。
 
@@ -86,7 +86,7 @@ v1.0 发布后一个月内，这套体系在实战中完成了多项自进化：
 skills/hermes-orchestrator/
 ├── SKILL.md                          # 核心调度逻辑 (v6.1)
 └── references/
-    ├── agent-roles.md                # 三 Agent 角色定义 + 通信协议
+    ├── agent-roles.md                # 四 Agent 角色定义 + 通信协议
     ├── embedded-boundary-checklist.md # UART/Mesh/Flash/ISR 边界检查表
     └── pitfalls-collection.md       # 多 Agent 通用陷阱集
 
