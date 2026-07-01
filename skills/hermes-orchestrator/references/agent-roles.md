@@ -1,7 +1,8 @@
-# 三 Agent 角色定义
+# 四 Agent 角色定义
 
 > 从 `hermes-orchestrator` SKILL.md 中拆分出来的纯角色定义文件。
 > 每次修改角色边界只需更新此文件，不影响调度逻辑。
+> v2.1：新增 Marvis（系统操作轨）
 
 ---
 
@@ -87,21 +88,83 @@ openclaw agent --agent main --session-id "id-$(date +%s)" --local \
 
 ---
 
+## Marvis — 系统操作轨
+
+### 定位
+Windows 桌面环境智能助手。补 Claude Code 和 OpenClaw 都覆盖不到的空白：文件系统操作、Windows 系统配置、桌面软件自动化。
+
+### 能做
+- **文件系统**: 搜索、内容问答、格式转换、批量整理归类
+- **系统配置**: Windows 设置查询与修改、定时任务调度、进程管理、窗口桌面管理
+- **端侧应用**: Android 模拟器应用控制、微信小程序交互、Windows 桌面软件自动化
+
+### 不能做
+- 写嵌入式固件代码 → 派 Claude Code
+- 网页搜索/调研 → 派 OpenClaw
+- 跨 WSL2 的 Linux 操作 → Hermes 直辖
+
+### 调用方式（文件桥接）
+Hermes (WSL2) 和 Marvis (Windows) 跨 OS 边界，不走 terminal heredoc：
+
+```
+  WSL2 (Hermes)                    Windows (Marvis)
+  ┌──────────────┐                ┌──────────────────┐
+  │ 写 task_N.json│  ──/mnt/c/──▶  │ 监听 bridge 目录  │
+  │ 到 bridge/    │                │ 读取 → 执行      │
+  │              │  ◀──/mnt/c/──  │ 结果写回 result   │
+  │ 轮询 result   │                │                  │
+  └──────────────┘                └──────────────────┘
+
+  共享目录：C:\Users\user\.hermes-marvis-bridge\
+  WSL2 路径：/mnt/c/Users/user/.hermes-marvis-bridge/
+```
+
+任务格式 (`task_{id}.json`)：
+```json
+{
+  "task_id": "task_001",
+  "task": "将桌面下所有 PDF 按年份归类到子文件夹",
+  "priority": "normal",
+  "timestamp": "2026-07-01T12:00:00+08:00"
+}
+```
+
+结果格式 (`task_{id}_result.json`)：
+```json
+{
+  "task_id": "task_001",
+  "status": "DONE",
+  "summary": "已将 23 个 PDF 按年份归入 5 个子文件夹",
+  "artifacts": [],
+  "timestamp": "2026-07-01T12:00:15+08:00"
+}
+```
+
+### 并发锁约定
+- Hermes 写任务前检查同名 result 不存在（幂等）
+- Marvis 处理前将任务文件重命名为 `task_{id}_processing.json`
+- Hermes 超时 120s，超时未收到结果视为失败
+
+### 触发关键词
+文件整理、格式转换、批量重命名、查找文件、系统设置、定时任务、进程管理、桌面整理、打开/关闭/安装/卸载应用、Windows 配置
+
+---
+
 ## 星型通信协议
 
 ```
 用户 (@Hermes) → Hermes 分析
                    │
-          ┌────────┼────────┐
-          ▼        │        ▼
-     纯聊天/     需要       需要
-     简单任务   代码工作   搜索任务
-          │        │        │
-          ▼        ▼        ▼
-      Hermes   Claude Code  OpenClaw
-      自己答    --max-turns 8  --timeout 120
-          │        │        │
-          └────────┼────────┘
+      ┌────────────┼────────────┬────────────┐
+      ▼            │            ▼            ▼
+ 纯聊天/        需要代码     需要搜索     需要系统操作
+ 简单任务        工作         任务         /文件管理
+      │            │            │            │
+      ▼            ▼            ▼            ▼
+  Hermes      Claude Code   OpenClaw      Marvis
+  自己答      --max-turns 8  --timeout 120  文件桥接
+      │            │            │            │
+      └────────────┼────────────┼────────────┘
                    ▼
               Hermes 审查
               (检查【DONE】)

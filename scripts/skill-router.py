@@ -48,6 +48,8 @@ ROUTES = [
      "claude-code", "Claude Code调用规范"),
     (["openclaw", "搜索", "searxng", "网页"],
      "openclaw-searxng-config", "OpenClaw搜索配置"),
+    (["marvis", "马维斯", "系统操作", "文件整理", "格式转换", "批量重命名", "桌面整理", "定时任务", "进程管理", "windows配置"],
+     "hermes-orchestrator", "四Agent调度 (含Marvis系统操作轨)"),
     (["openhuman", "飞书", "webhook", "双向通道"],
      "hermes-openhuman-bridge", "Hermes↔OpenHuman通道"),
     (["loop", "循环", "试错", "自主修复", "自动重试"],
