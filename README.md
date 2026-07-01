@@ -1,4 +1,4 @@
-# Hermes Multi-Agent — 三 Agent 星型调度体系
+# Hermes Multi-Agent — 四 Agent 星型调度体系
 
 > 一个自学的嵌入式程序员，用 AI 不停摸索出来的多 Agent 协作体系。
 > 总调度 (Hermes) + 代码执行 (Claude Code) + 网页搜索 (OpenClaw)。
