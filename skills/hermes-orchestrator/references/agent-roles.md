@@ -103,24 +103,26 @@ Windows 桌面环境智能助手。补 Claude Code 和 OpenClaw 都覆盖不到�
 - 网页搜索/调研 → 派 OpenClaw
 - 跨 WSL2 的 Linux 操作 → Hermes 直辖
 
-### 调用方式（文件桥接 + Marvis 定时轮询）
+### 调用方式（文件桥接 + bridge-listener）
 
-Hermes (WSL2) 和 Marvis (Windows) 跨 OS 边界，通过共享目录通信：
+Hermes (WSL2) 和 Marvis (Windows) 跨 OS 边界，通过共享目录 + bridge-listener 通信：
 
 ```
   WSL2 (Hermes)                    Windows (Marvis)
   ┌──────────────┐                ┌──────────────────┐
-  │ 写 task_N.json│  ──/mnt/c/──▶  │ 定时任务每30分钟   │
-  │ 到 bridge/    │                │ 扫描 bridge 目录   │
-  │              │  ◀──/mnt/c/──  │ 消费任务→写result  │
-  │ 轮询 result   │                │                  │
+  │ 写 task_N.json│  ──/mnt/c/──▶  │ bridge-listener   │
+  │ 到 bridge/    │                │ 2秒轮询发现新任务  │
+  │              │  ◀──/mnt/c/──  │ Win通知 → Marvis  │
+  │ 轮询 result   │                │ 手动消费→写result  │
   └──────────────┘                └──────────────────┘
 
   共享目录：C:\Users\user\.hermes-marvis-bridge\
   WSL2 路径：/mnt/c/Users/user/.hermes-marvis-bridge/
 ```
 
-Marvis 使用自身定时任务能力自动扫描，无需外部守护脚本。30 分钟延迟对嵌入式固件开发场景完全可接受。
+`bridge-listener.py` 通过 Windows 任务计划程序开机自启（`schtasks /TN "MarvisBridgeListener"`），`pythonw` 后台无窗口运行，2 秒轮询。发现新任务后弹 Windows 通知，用户在 Marvis 对话框手动触发执行。
+
+Marvis 内置定时任务方案已弃用（离线时无法触发）。
 
 任务格式 (`task_{id}.json`)：
 ```json
@@ -146,7 +148,7 @@ Marvis 使用自身定时任务能力自动扫描，无需外部守护脚本。3
 ### 并发锁约定
 - Hermes 写任务前检查同名 result 不存在（幂等）
 - Marvis 处理前将任务文件重命名为 `task_{id}_processing.json`
-- Hermes 超时 35 分钟（30 分钟轮询间隔 + 5 分钟执行时间），超时视为失败
+- Hermes 超时 5 分钟（bridge-listener 秒级响应 + 通知后人为操作时间），超时视为失败
 
 ### 触发关键词
 文件整理、格式转换、批量重命名、查找文件、系统设置、定时任务、进程管理、桌面整理、打开/关闭/安装/卸载应用、Windows 配置
