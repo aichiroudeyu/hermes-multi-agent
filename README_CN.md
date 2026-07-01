@@ -33,6 +33,7 @@ v1.0 发布后一个月内，这套体系在实战中完成了多项自进化：
 | `_workspace/` 审计存档 | 每次委派子 Agent 的任务输入和返回结果持久化存档，事后可完整回溯 |
 | **更新前备份** | `pre-update-backup.sh` 自动备份 MCP servers 定义、permissions 白名单，防 npm 更新清空 |
 | **跨 PC 同步安全** | 不打包同步 API key、本地 IP、端口号，只传纯知识和工具 |
+| **并行委派** | `terminal(background=true)` 同时开多个 Claude Code CLI + OpenClaw，真正并行 |
 
 ---
 
@@ -62,7 +63,9 @@ v1.0 发布后一个月内，这套体系在实战中完成了多项自进化：
         └──────┘     └──────┘
 ```
 
-**核心原则**：一次只派一个人，等 `【DONE】` 回来再派下一个。
+**核心原则**：默认串行——一次只派一个人，等 `【DONE】` 回来再派下一个。
+
+**并行模式**：双板代码审查、搜索+写代码同时进行时，Hermes 用 `terminal(background=true)` 同时开多个 Claude Code CLI + OpenClaw，不受 `delegate_task` 的并发限制。安全条件：不同目录 + 只读或一读一写 + 不 make + 不同 Git 仓库。
 
 ---
 
@@ -148,6 +151,19 @@ python3 hermes_loop.py --goal "用 Python 写 TCP echo server" \
 - 用户已确认的设计选择
 
 防止 AI 将设计选择误判为 bug。
+
+### 7. 安全并行委派
+
+`delegate_task` 走 deepseek-v4-flash 子 agent 且 max_concurrent_children 有限。真正的并行靠 `terminal(background=true)`：
+
+```
+Hermes 同时开:
+├── claude heredoc 审查 Dongle 代码    (background=true)
+├── claude heredoc 审查控制板代码      (background=true)
+└── OpenClaw 搜索技术方案              (background=true)
+```
+
+不限数量。安全规则：不同目录、只读或一读一写、不 make、不同 Git 仓库、不碰 MCP SQLite 写入。
 
 ---
 
@@ -235,6 +251,7 @@ mkdir -p ~/.hermes/workspace
 | SOUL.md 铁律 | 用不可覆盖的约束防止 Agent 长期运行时行为漂移 |
 | 跨 PC 同步不含 config | 防止 API key 通过同步包泄露 |
 | 更新前备份 MCP 白名单 | npm 更新可能清空 MCP servers 定义 |
+| 并行走 terminal bg 不靠 delegate_task | delegate_task 走子 Agent 非 Claude Code CLI，terminal bg 真正并行 |
 
 ---
 

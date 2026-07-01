@@ -38,6 +38,7 @@ v1.0 发布后一个月的自进化成果：
 | `_workspace/` 审计 | 每次委派子 Agent 的输入输出存档可追溯 |
 | **更新前备份** | `pre-update-backup.sh` 防 npm 更新清空 MCP 配置 |
 | **跨 PC 同步** | 不同步 API key/本地 IP/端口号，只同步纯知识和工具 |
+| **并行委派** | `terminal(background=true)` 同时开多个 Claude Code CLI + OpenClaw，真正并行 |
 
 ---
 
@@ -96,7 +97,7 @@ docs/
 
 ### 1. 星型调度 + 自动路由
 
-Hermes 分析任务 → `skill-router.py` 自动匹配 skills → 路由到 Claude Code 或 OpenClaw。严格串行——一次只派一个人。
+Hermes 分析任务 → `skill-router.py` 自动匹配 skills → 路由到 Claude Code 或 OpenClaw。默认串行——一次只派一个人。双板审查/搜索+写代码时用 `terminal(background=true)` 并行开多个 Claude Code CLI。
 
 ### 2. Loop 自动闭环
 

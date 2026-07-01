@@ -107,6 +107,8 @@ python3 hermes_loop.py --goal "..." --acceptance "..." --max-loops 5
 
 Agent 工具链变得可插拔、可扩展。
 
+**并行委派**: `delegate_task` 走 deepseek-v4-flash 子 agent、max_concurrent_children=3，实用性有限。真正并行靠 `terminal(background=true)` 同时开多个 Claude Code CLI heredoc，不限数量。双板代码审查、搜索+写代码同时进行时主动并行。安全规则：不同目录、只读或一读一写、不 make、不同 Git 仓库、不碰 MCP SQLite 写入。
+
 ---
 
 ## 阶段八：跨 PC 同步 + 安全治理 (2026-06-29)
@@ -145,6 +147,7 @@ Agent 工具链变得可插拔、可扩展。
 | 06-25 | 跨 PC 同步不含 config | 防止 API key 泄露 |
 | 06-25 | 更新前备份 MCP | npm 更新可能清空 MCP servers |
 | 06-29 | GitHub 开源 MIT | 让更多嵌入式+AI 交叉领域的人受益 |
+| 06-30 | 并行走 terminal bg 不靠 delegate_task | delegate_task 走子 Agent 非 Claude Code CLI，terminal bg 真正并行 |
 
 ---
 

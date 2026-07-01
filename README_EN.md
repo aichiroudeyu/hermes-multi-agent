@@ -33,6 +33,7 @@ One month of self-evolution since v1.0:
 | `_workspace/` Audit Trail | Every sub-agent task input/output is persisted for full post-mortem traceability |
 | **Pre-Update Backup** | `pre-update-backup.sh` auto-backs up MCP server definitions and permissions allowlists |
 | **Cross-PC Sync Safety** | No API keys, local IPs, or port numbers in sync packages — only pure knowledge and tools |
+| **Parallel Delegation** | `terminal(background=true)` spawns multiple Claude Code CLI + OpenClaw simultaneously, true parallelism |
 
 ---
 
@@ -62,7 +63,9 @@ One month of self-evolution since v1.0:
         └──────┘     └──────┘
 ```
 
-**Core principle**: Deploy one agent at a time. Wait for `【DONE】` before deploying the next.
+**Core principle**: Deploy one agent at a time by default. Wait for `【DONE】` before deploying the next.
+
+**Parallel mode**: For dual-board code review or search+code concurrent work, Hermes uses `terminal(background=true)` to spawn multiple Claude Code CLI + OpenClaw simultaneously — not limited by `delegate_task`'s max_concurrent_children. Safety rules: different directories, read-only or one-read-one-write, no make, different Git repos.
 
 ---
 
@@ -148,6 +151,19 @@ When dispatching Claude Code for code review, attach **full design decision cont
 - User-confirmed design choices
 
 Prevents AI from flagging design decisions as bugs.
+
+### 7. Safe Parallel Delegation
+
+`delegate_task` uses deepseek-v4-flash sub-agents and has limited max_concurrent_children. True parallelism comes from `terminal(background=true)`:
+
+```
+Hermes spawns simultaneously:
+├── claude heredoc reviewing Dongle code    (background=true)
+├── claude heredoc reviewing control board  (background=true)
+└── OpenClaw searching for technical docs   (background=true)
+```
+
+Unlimited concurrency. Safety rules: different directories, read-only or one-read-one-write, no make, different Git repos, no MCP SQLite writes.
 
 ---
 
@@ -235,6 +251,7 @@ Recommended learning path:
 | SOUL.md iron rules | Immutable constraints prevent behavior drift over long runs |
 | Cross-PC sync excludes config | Prevents API key leakage through sync packages |
 | Backup MCP allowlists before update | npm update can wipe MCP server definitions |
+| Parallel via terminal bg, not delegate_task | delegate_task spawns sub-agents not Claude Code CLI; terminal bg is true parallelism |
 
 ---
 
