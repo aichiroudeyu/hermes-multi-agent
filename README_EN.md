@@ -34,6 +34,7 @@ One month of self-evolution since v1.0:
 | **Pre-Update Backup** | `pre-update-backup.sh` auto-backs up MCP server definitions and permissions allowlists |
 | **Cross-PC Sync Safety** | No API keys, local IPs, or port numbers in sync packages — only pure knowledge and tools |
 | **Parallel Delegation** | `terminal(background=true)` spawns multiple Claude Code CLI + OpenClaw simultaneously, true parallelism |
+| **Four-Agent System** | Added Marvis (Tencent AI assistant) as system operations lane — Windows file management, system config, desktop automation |
 
 ---
 
@@ -51,16 +52,16 @@ One month of self-evolution since v1.0:
             │  Memory / Wiki / Skills │
             │  SOUL.md constraints    │
             │  Analyze → Route → Deploy│
-            └──┬──────────┬────────────┘
-               │          │
-       Code    │          │ Search
-               ▼          ▼
-        ┌──────┐     ┌──────┐
-        │Claude│     │Open  │
-        │ Code │     │Claw  │
-        │ Coder│     │Search│
-        │5 MCP │     │SearX │
-        └──────┘     └──────┘
+            └──┬──────┬──────┬────────┘
+               │      │      │
+       Code    │Search│      │ System Ops
+               ▼      ▼      ▼
+        ┌──────┐ ┌──────┐ ┌──────────┐
+        │Claude│ │Open  │ │  Marvis  │
+        │ Code │ │Claw  │ │  马维斯   │
+        │Coder │ │Search│ │Sys/Files  │
+        │5 MCP │ │SearX │ │Tencent LLM│
+        └──────┘ └──────┘ └──────────┘
 ```
 
 **Core principle**: Deploy one agent at a time by default. Wait for `【DONE】` before deploying the next.
