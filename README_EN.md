@@ -18,7 +18,7 @@ This isn't a lab experiment. It was born from real-world Telink BLE Mesh firmwar
 
 ---
 
-## v2.0 Update (July 2026)
+## v2.2 Update (July 2026)
 
 One month of self-evolution since v1.0:
 
