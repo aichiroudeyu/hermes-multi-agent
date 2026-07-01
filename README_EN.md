@@ -35,6 +35,9 @@ One month of self-evolution since v1.0:
 | **Cross-PC Sync Safety** | No API keys, local IPs, or port numbers in sync packages — only pure knowledge and tools |
 | **Parallel Delegation** | `terminal(background=true)` spawns multiple Claude Code CLI + OpenClaw simultaneously, true parallelism |
 | **Four-Agent System** | Added Marvis (Tencent AI assistant) as system operations lane — Windows file management, system config, desktop automation |
+| **Marvis File Bridge** | WSL2 ↔ Windows cross-OS communication via shared directory + Marvis scheduled polling, zero external deps |
+| **Audit Log** | `audit-log.py` records every delegation (agent/duration/status/cost), `--stats` for summary |
+| **Single Source Roles** | Agent role definitions consolidated in `agent-roles.md`, SKILL.md only references |
 
 ---
 
@@ -96,7 +99,8 @@ scripts/
 ├── hermes_loop.py                    # Loop mode scheduler (326 lines)
 ├── weekly-report.py                  # Weekly report auto-generator
 ├── memory-archive.py                 # Memory archival and cleanup
-└── memory-health-check.py            # Memory health monitoring
+├── memory-archive.py                 # Memory archival and cleanup
+├── audit-log.py                      # Delegation audit log
 
 docs/
 ├── pitfalls-and-fixes.md             # Post-update issue log (13 items)
@@ -250,6 +254,8 @@ Recommended learning path:
 | Boundary checklists | 70% of embedded bugs at module boundaries |
 | Trigger-rich descriptions | Vague description = skill never auto-loaded |
 | SOUL.md iron rules | Immutable constraints prevent behavior drift over long runs |
+| Single source for roles | agent-roles.md is the sole authority, SKILL.md only references |
+| Audit log JSONL | One JSON line per delegation, traceable and queryable |
 | Cross-PC sync excludes config | Prevents API key leakage through sync packages |
 | Backup MCP allowlists before update | npm update can wipe MCP server definitions |
 | Parallel via terminal bg, not delegate_task | delegate_task spawns sub-agents not Claude Code CLI; terminal bg is true parallelism |

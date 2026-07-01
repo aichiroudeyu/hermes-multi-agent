@@ -35,6 +35,9 @@ v1.0 发布后一个月内，这套体系在实战中完成了多项自进化：
 | **跨 PC 同步安全** | 不打包同步 API key、本地 IP、端口号，只传纯知识和工具 |
 | **并行委派** | `terminal(background=true)` 同时开多个 Claude Code CLI + OpenClaw，真正并行 |
 | **四 Agent 体系** | 新增 Marvis（腾讯 AI 助手）作为系统操作轨，Windows 文件管理/系统配置/桌面自动化 |
+| **Marvis 文件桥接** | WSL2 ↔ Windows 跨 OS 通信，共享目录 + Marvis 定时轮询，零外部依赖 |
+| **审计日志** | `audit-log.py` 记录每次委派（Agent/耗时/状态/成本），`--stats` 一键统计 |
+| **角色去重** | Agent 角色定义收敛到 `agent-roles.md` 单一来源，SKILL.md 只保留调度逻辑 |
 
 ---
 
@@ -96,7 +99,8 @@ scripts/
 ├── hermes_loop.py                    # Loop 模式调度器 (326行)
 ├── weekly-report.py                  # 周报自动生成
 ├── memory-archive.py                 # 记忆归档清理
-└── memory-health-check.py            # 记忆健康检查
+├── memory-archive.py                 # 记忆归档清理
+├── audit-log.py                      # 委派审计日志
 
 docs/
 ├── pitfalls-and-fixes.md             # Agent 更新后问题记录 (13条)
@@ -250,6 +254,8 @@ mkdir -p ~/.hermes/workspace
 | 边界检查表 | 嵌入式 70% bug 在模块边界 |
 | description 含触发场景 | 模糊的 description = skill 不会被自动加载 |
 | SOUL.md 铁律 | 用不可覆盖的约束防止 Agent 长期运行时行为漂移 |
+| 角色定义单一来源 | agent-roles.md 是唯一权威，SKILL.md 只引不写 |
+| 审计日志 JSONL | 每行一条委派记录，可追溯、可统计 |
 | 跨 PC 同步不含 config | 防止 API key 通过同步包泄露 |
 | 更新前备份 MCP 白名单 | npm 更新可能清空 MCP servers 定义 |
 | 并行走 terminal bg 不靠 delegate_task | delegate_task 走子 Agent 非 Claude Code CLI，terminal bg 真正并行 |
