@@ -40,34 +40,27 @@ related_skills: [claude-code, mcu-firmware-dev, wsl2-setup, dali-protocol-refere
 
 ## 一、真隔离
 
-三个 Agent 是三个独立进程，物理隔离（Marvis 通过文件桥接通信，也属独立进程）：
+> **各 Agent 角色定义、能力边界、调用方式、通信协议 → 见 `references/agent-roles.md`**
 
-| Agent | 进程 | 崩溃影响 |
-|-------|------|---------|
-| Hermes | `hermes gateway run` (systemd) | 总调度崩，全员停 |
-| Claude Code | `claude -p` 一次性调用 | 崩了只丢当前任务，Hermes 重试 |
-| OpenClaw | `openclaw agent` 一次性调用 | 同上 |
-| Marvis | Windows 桌面应用 + 定时轮询 | 崩了仅丢失当前系统操作任务 |
+四个 Agent 是独立进程，物理隔离。崩溃不互相影响。
 
 **规则：任一子 Agent 崩了，Hermes 捕获错误，最多重试 2 次，然后汇报失败。**
 
-### `_workspace/` 中间产物存档
+### `_workspace/` 中间产物存档 + 审计日志
 
-每次派子 Agent 前，把输入 prompt 写入 `~/.hermes/workspace/`，子 Agent 返回的 `【DONE】` 完整内容也存档。用于事后审计。
+每次派子 Agent 前，把输入 prompt 写入 `~/.hermes/workspace/`。命名规范：`{YYYYMMDD_HHMM}_{agent}_{task}.md`。
 
+委派完成后，调用一次审计日志：
 ```bash
-# 派 Claude Code 前
-echo "$prompt" > ~/.hermes/workspace/$(date +%Y%m%d_%H%M)_claude-code_${task}.md
-
-# 子 Agent 返回后，存档
-cat > ~/.hermes/workspace/$(date +%Y%m%d_%H%M)_claude-code_${task}_result.md << 'AGENT_OUTPUT'
-<子Agent返回的完整内容含【DONE】>
-AGENT_OUTPUT
+echo '{"agent":"claude-code","task":"XX","duration_s":45,"status":"DONE","tokens_est":12000,"cost_est":0.15}' | python3 ~/.hermes/scripts/audit-log.py
 ```
 
-命名规范：`{YYYYMMDD_HHMM}_{agent}_{task}.md` 和 `{YYYYMMDD_HHMM}_{agent}_{task}_result.md`
+审计日志存储在 `~/.hermes/workspace/audit-log.jsonl`，每条委派一行 JSON：
+```json
+{"agent":"claude-code","task":"审查 Dongle UART","duration_s":45,"status":"DONE","tokens_est":12000,"cost_est":0.15,"timestamp":"..."}
+```
 
-**不存 `_workspace/` 的情况**：Hermes 自己处理的纯聊天/简单命令/文件读写/API 查询。只存委派给子 Agent 的任务。
+查询统计：`python3 audit-log.py --stats`  查特定 Agent：`python3 audit-log.py --query claude-code`
 
 ---
 
